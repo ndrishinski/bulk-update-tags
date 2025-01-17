@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "aa5aa7b2e288613dc1313758ecd11f76"
-application_url = "https://example.com/"
+application_url = "https://good-warner-rep-poor.trycloudflare.com"
 embedded = true
 name = "learn-polaris"
 handle = "learn-polaris-1"
@@ -19,10 +19,19 @@ api_version = "2025-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products, read_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://good-warner-rep-poor.trycloudflare.com/auth/callback",
+  "https://good-warner-rep-poor.trycloudflare.com/auth/shopify/callback",
+  "https://good-warner-rep-poor.trycloudflare.com/api/auth/callback"
+]
 
 [pos]
 embedded = false
+
+[build]
+dev_store_url = "nicky-d-test.myshopify.com"
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
