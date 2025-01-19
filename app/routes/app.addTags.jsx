@@ -1,6 +1,13 @@
 // app/routes/app.addTags.jsx
 import React, { useState, useEffect } from 'react';
-import { Page, Card, Checkbox, Button, DataTable } from '@shopify/polaris';
+import {
+  LegacyCard,
+  ResourceList,
+  Avatar,
+  ResourceItem,
+  Text,
+} from '@shopify/polaris';
+import {DeleteIcon} from '@shopify/polaris-icons';
 import { authenticate } from '../shopify.server'
 import {
   useLoaderData,
@@ -18,6 +25,10 @@ export const loader = async ({ request }) => {
                 node {
                     id
                     title
+                    featuredMedia {
+                      id
+                    }
+                    tags
                 }
             }
         }
@@ -39,7 +50,7 @@ const AppAddTags = () => {
     const qrCode = useLoaderData();
     let tempProducts = qrCode.data.data.products.edges
     const allProds = tempProducts.map(i => {
-      return {id: i.node.id, title: i.node.title}
+      return {id: i.node.id, title: i.node.title, featuredMedia: i.node.featuredMedia?.id || '', tags: i.node.tags || []}
     })
 
     const handleCheckboxChange = (id) => {
@@ -57,29 +68,72 @@ const AppAddTags = () => {
         console.log('Adding tags to:', selectedItems);
     };
 
-    const rows = allProds.map((product) => [
-        <Checkbox
-            checked={selectedItems.includes(product.id)}
-            onChange={() => handleCheckboxChange(product.id)}
-            label={product.title}
-        />,
-        product.title,
-    ]);
+    const resourceName = {
+      singular: 'Product',
+      plural: 'Products'
+    }
+
+    const promotedBulkActions = [
+      {
+        content: 'Edit customers',
+        onAction: () => console.log('Todo: implement bulk edit'),
+      },
+    ];
+  
+    const bulkActions = [
+      {
+        content: 'Add tags',
+        onAction: () => console.log('Todo: implement bulk add tags'),
+      },
+      {
+        content: 'Remove tags',
+        onAction: () => console.log('Todo: implement bulk remove tags'),
+      },
+      {
+        icon: DeleteIcon,
+        destructive: true,
+        content: 'Delete customers',
+        onAction: () => console.log('Todo: implement bulk delete'),
+      },
+    ];
 
     return (
-        <Page title="Add Tags to Products">
-            <Card>
-                <DataTable
-                    columnContentTypes={['text', 'text']}
-                    headings={['Select', 'Product Name']}
-                    rows={rows}
-                />
-                <Button onClick={handleTagAddition} disabled={selectedItems.length === 0}>
-                    Add Tag
-                </Button>
-            </Card>
-        </Page>
+      <LegacyCard>
+        <ResourceList
+          resourceName={resourceName}
+          items={allProds}
+          renderItem={renderItem}
+          selectedItems={selectedItems}
+          onSelectionChange={setSelectedItems}
+          promotedBulkActions={promotedBulkActions}
+          bulkActions={bulkActions}
+        />
+      </LegacyCard>
     );
 };
 
 export default AppAddTags;
+
+
+
+function renderItem(item) {
+  const {id, title, featuredMedia, tags} = item;
+  const media = <Avatar product size="md" name={title} source={featuredMedia} />;
+ // TODO: Get avatar to show product image, also format horizontal
+  return (
+    <ResourceItem
+      id={id}
+      url={'#'}
+      media={media}
+      accessibilityLabel={`View details for ${title}`}
+    >
+      <Text variant="bodyMd" fontWeight="bold" as="h3">
+        {title}
+      </Text>
+      <div>Product Id: {id}</div>
+      <Text variant='bodyMd'>
+        {tags.map(tag => <p>{tag}</p>)}
+      </Text>
+    </ResourceItem>
+  );
+}

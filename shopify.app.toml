@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "aa5aa7b2e288613dc1313758ecd11f76"
-application_url = "https://good-warner-rep-poor.trycloudflare.com"
+application_url = "https://cameroon-longitude-robinson-bruce.trycloudflare.com"
 embedded = true
 name = "learn-polaris"
 handle = "learn-polaris-1"
@@ -23,9 +23,9 @@ scopes = "write_products, read_products"
 
 [auth]
 redirect_urls = [
-  "https://good-warner-rep-poor.trycloudflare.com/auth/callback",
-  "https://good-warner-rep-poor.trycloudflare.com/auth/shopify/callback",
-  "https://good-warner-rep-poor.trycloudflare.com/api/auth/callback"
+  "https://cameroon-longitude-robinson-bruce.trycloudflare.com/auth/callback",
+  "https://cameroon-longitude-robinson-bruce.trycloudflare.com/auth/shopify/callback",
+  "https://cameroon-longitude-robinson-bruce.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
