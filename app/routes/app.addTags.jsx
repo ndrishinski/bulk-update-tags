@@ -13,6 +13,7 @@ import {DeleteIcon} from '@shopify/polaris-icons';
 import { authenticate } from '../shopify.server'
 import {
   useLoaderData,
+  Form,
 } from "@remix-run/react";
 import { json } from '@remix-run/node';
 
@@ -52,10 +53,52 @@ export const loader = async ({ request }) => {
   }
 };
 
+export const action = async ({ request }) => {
+  console.log('YOOOO NICKI GOT TO HERE!! ', request)
+  const { admin } = await authenticate.admin(request)
+  const response = await admin.graphql(
+    `#graphql
+    mutation UpdateProductWithNewMedia($input, $tags) {
+      productUpdate(input: $input, tags: $tags) {
+        product {
+          id
+          media(first: 10) {
+            nodes {
+              alt
+              mediaContentType
+              preview {
+                status
+              }
+            }
+          }
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }`,
+    {
+      variables: {
+        "input": {
+          "id": prodId
+        },
+        "tags": [
+          value
+        ]
+      },
+    },
+  );
+  console.log('yooo checking uno 2', prodId)
+  const data = await response.json();
+  console.log('yooo checking uno', data)
+}
+
 const AppAddTags = () => {
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const qrCode = useLoaderData();
+    const allProducts = useLoaderData();
+    // const data = useActionData()
 
     const [value, setValue] = useState('');
 
@@ -63,7 +106,7 @@ const AppAddTags = () => {
       (newValue) => setValue(newValue),
       [],
     );
-    let tempProducts = qrCode.data.data.products.edges
+    let tempProducts = allProducts.data.data.products.edges
     const allProds = tempProducts.map(i => {
       return {id: i.node.id, title: i.node.title, featuredMedia: i.node.featuredMedia?.preview?.image?.url || '', tags: i.node.tags || []}
     })
@@ -79,56 +122,16 @@ const AppAddTags = () => {
     };
 
     // TODO: get this query working adding / removing 
-    const tagGraphqlQuery = async () => {
-      const response = await admin.graphql(
-        `#graphql
-        mutation UpdateProductWithNewMedia($input: ProductInput!, $media: [CreateMediaInput!]) {
-          productUpdate(input: $input, media: $media) {
-            product {
-              id
-              media(first: 10) {
-                nodes {
-                  alt
-                  mediaContentType
-                  preview {
-                    status
-                  }
-                }
-              }
-            }
-            userErrors {
-              field
-              message
-            }
-          }
-        }`,
-        {
-          variables: {
-            "input": {
-              "id": "gid://shopify/Product/912855135" // product ID
-            },
-            "media": [
-              {
-                "originalSource": "https://cdn.shopify.com/shopifycloud/brochure/assets/sell/image/image-@artdirection-large-1ba8d5de56c361cec6bc487b747c8774b9ec8203f392a99f53c028df8d0fb3fc.png",
-                "alt": "Gray helmet for bikers",
-                "mediaContentType": "IMAGE"
-              },
-              {
-                "originalSource": "https://www.youtube.com/watch?v=4L8VbGRibj8&list=PLlMkWQ65HlcEoPyG9QayqEaAu0ftj0MMz",
-                "alt": "Testing helmet resistance against impacts",
-                "mediaContentType": "EXTERNAL_VIDEO"
-              }
-            ]
-          },
-        },
-      );
-      
-      const data = await response.json();
+    const tagGraphqlQuery = async (prodId) => {
+      // TODO: call action
     }
 
     const handleTagAddition = () => {
         // Logic to add tags to selected products
         console.log('Adding tags to:', selectedItems);
+        selectedItems.map(prodId => {
+          tagGraphqlQuery(prodId)
+        })
     };
     
     const handleTagRemoval = () => {
@@ -143,12 +146,12 @@ const AppAddTags = () => {
 
     const promotedBulkActions = [
       {
-        content: 'Add Tag',
-        onAction: () => console.log('Todo: implement bulk edit'),
+        content: 'Add Tagz',
+        onAction: () => handleTagAddition(),
       },
       {
         content: 'Remove Tag',
-        onAction: () => console.log('Todo: implement bulk edit'),
+        onAction: () => handleTagRemoval(),
       },
     ];
  
@@ -171,12 +174,14 @@ const AppAddTags = () => {
 
     return (
       <Card>
-        <TextField
-          label="Bulk Tag Add"
-          value={value}
-          onChange={handleChange}
-          autoComplete="off"
-        />
+        <Form method="post">
+          <TextField
+            label="Bulk Tag Add"
+            value={value}
+            onChange={handleChange}
+            autoComplete="off"
+          />
+        </Form>
         <ResourceList
           resourceName={resourceName}
           items={allProds}
