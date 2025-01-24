@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "aa5aa7b2e288613dc1313758ecd11f76"
-application_url = "https://stopping-virtual-careful-tend.trycloudflare.com"
+application_url = "https://budgets-disabilities-chosen-jpeg.trycloudflare.com"
 embedded = true
 name = "learn-polaris"
 handle = "learn-polaris-1"
@@ -23,9 +23,9 @@ scopes = "write_products, read_products"
 
 [auth]
 redirect_urls = [
-  "https://stopping-virtual-careful-tend.trycloudflare.com/auth/callback",
-  "https://stopping-virtual-careful-tend.trycloudflare.com/auth/shopify/callback",
-  "https://stopping-virtual-careful-tend.trycloudflare.com/api/auth/callback"
+  "https://budgets-disabilities-chosen-jpeg.trycloudflare.com/auth/callback",
+  "https://budgets-disabilities-chosen-jpeg.trycloudflare.com/auth/shopify/callback",
+  "https://budgets-disabilities-chosen-jpeg.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
