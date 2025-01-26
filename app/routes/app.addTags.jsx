@@ -62,7 +62,6 @@ export const action = async ({ request }) => {
   // Parse the form data
   const formData = await request.formData();
   const productIds = JSON.parse(formData.get('productIds')) || [] // Array of product IDs
-  console.log('testing server prod Ids: ', productIds)
   const tag = formData.get('tag'); // Tag string
   const isRemoval = formData.get('isRemoval')
 
@@ -169,7 +168,7 @@ const AppAddTags = () => {
 
     const promotedBulkActions = [
       {
-        content: 'Add Tagz',
+        content: 'Add Tag',
         onAction: (e) => {
           setIsRemoval(false)
           handleTagUpate(e)
